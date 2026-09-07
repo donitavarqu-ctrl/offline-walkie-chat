@@ -32,10 +32,24 @@ jobs:
           cd ..
           rm -rf temp_app
 
-      - name: Set SDK Versions
+      - name: Fix Subproject SDK Versions
         run: |
-          find android/ -name "build.gradle" -exec sed -i 's/minSdkVersion .*/minSdkVersion = 23/g' {} +
-          find android/ -name "build.gradle" -exec sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 23/g' {} +
+          cat << 'EOF' >> android/build.gradle
+
+          subprojects {
+              afterEvaluate { project ->
+                  if (project.hasProperty("android")) {
+                      android {
+                          compileSdkVersion 34
+                          defaultConfig {
+                              minSdkVersion 23
+                              targetSdkVersion 34
+                          }
+                      }
+                  }
+              }
+          }
+          EOF
 
       - name: Install Dependencies
         run: flutter pub get
@@ -48,4 +62,3 @@ jobs:
         with:
           name: offline-walkie-app
           path: build/app/outputs/flutter-apk/*.apk
-          
