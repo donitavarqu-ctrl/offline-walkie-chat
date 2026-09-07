@@ -25,8 +25,8 @@ jobs:
 
       - name: Install Android SDK 35
         run: |
-          yes | sdkmanager --licenses || true
-          sdkmanager "platforms;android-35" "build-tools;35.0.0"
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-35" "build-tools;35.0.0"
 
       - name: Recreate Android Project
         run: |
@@ -39,12 +39,12 @@ jobs:
 
       - name: Configure Android SDK Versions
         run: |
-          sed -i 's/compileSdkVersion .*/compileSdkVersion 35/g' android/app/build.gradle || true
-          sed -i 's/targetSdkVersion .*/targetSdkVersion 35/g' android/app/build.gradle || true
-          sed -i 's/minSdkVersion .*/minSdkVersion 23/g' android/app/build.gradle || true
-          sed -i 's/compileSdk = .*/compileSdk = 35/g' android/app/build.gradle || true
-          sed -i 's/targetSdk = .*/targetSdk = 35/g' android/app/build.gradle || true
-          sed -i 's/minSdk = .*/minSdk = 23/g' android/app/build.gradle || true
+          find android/ -name "build.gradle" -exec sed -i 's/compileSdkVersion .*/compileSdkVersion 35/g' {} +
+          find android/ -name "build.gradle" -exec sed -i 's/targetSdkVersion .*/targetSdkVersion 35/g' {} +
+          find android/ -name "build.gradle" -exec sed -i 's/minSdkVersion .*/minSdkVersion 23/g' {} +
+          find android/ -name "build.gradle" -exec sed -i 's/compileSdk = .*/compileSdk = 35/g' {} +
+          find android/ -name "build.gradle" -exec sed -i 's/targetSdk = .*/targetSdk = 35/g' {} +
+          find android/ -name "build.gradle" -exec sed -i 's/minSdk = .*/minSdk = 23/g' {} +
 
       - name: Install Dependencies
         run: flutter pub get
