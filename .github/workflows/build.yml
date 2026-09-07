@@ -32,6 +32,11 @@ jobs:
           cd ..
           rm -rf temp_app
 
+      - name: Set minSdk to 23
+        run: |
+          sed -i 's/minSdkVersion = flutter.minSdkVersion/minSdkVersion = 23/g' android/app/build.gradle
+          sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 23/g' android/app/build.gradle
+
       - name: Install Dependencies
         run: flutter pub get
 
@@ -43,4 +48,4 @@ jobs:
         with:
           name: offline-walkie-app
           path: build/app/outputs/flutter-apk/app-release.apk
-
+          
