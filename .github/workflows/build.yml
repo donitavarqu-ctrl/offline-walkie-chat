@@ -1,4 +1,4 @@
-name: Build Android APK
+description: name: Build Android APK
 
 on:
   push:
@@ -17,16 +17,19 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android Platform 35
+        run: |
+          yes | sdkmanager --licenses || true
+          sdkmanager "platforms;android-35" "build-tools;35.0.0"
+
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.6'
           channel: 'stable'
-
-      - name: Install Android SDK 35
-        run: |
-          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
-          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-35" "build-tools;35.0.0"
 
       - name: Recreate Android Project
         run: |
@@ -57,3 +60,4 @@ jobs:
         with:
           name: offline-walkie-app
           path: build/app/outputs/**/*.apk
+          
