@@ -17,11 +17,10 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: Set up Flutter Stable
+      - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          cache: true
 
       - name: Rebuild Clean Android Skeleton
         run: |
@@ -32,11 +31,10 @@ jobs:
           cd ..
           rm -rf temp_app
 
-      - name: Configure Android SDK Versions
+      - name: Set SDK Versions
         run: |
           find android/ -name "build.gradle" -exec sed -i 's/minSdkVersion .*/minSdkVersion = 23/g' {} +
           find android/ -name "build.gradle" -exec sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 23/g' {} +
-          find android/ -name "build.gradle" -exec sed -i 's/compileSdkVersion .*/compileSdkVersion = 34/g' {} +
 
       - name: Install Dependencies
         run: flutter pub get
