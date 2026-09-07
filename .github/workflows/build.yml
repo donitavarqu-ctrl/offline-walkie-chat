@@ -17,21 +17,13 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Install Android Platform 35
-        run: |
-          yes | sdkmanager --licenses || true
-          sdkmanager "platforms;android-35" "build-tools;35.0.0"
-
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.6'
           channel: 'stable'
 
-      - name: Recreate Android Project
+      - name: Rebuild Clean Android Skeleton
         run: |
           mkdir temp_app
           cd temp_app
@@ -40,14 +32,10 @@ jobs:
           cd ..
           rm -rf temp_app
 
-      - name: Configure Android SDK Versions
+      - name: Set Android SDK Version
         run: |
-          find android/ -name "build.gradle" -exec sed -i 's/compileSdkVersion .*/compileSdkVersion 35/g' {} +
-          find android/ -name "build.gradle" -exec sed -i 's/targetSdkVersion .*/targetSdkVersion 35/g' {} +
-          find android/ -name "build.gradle" -exec sed -i 's/minSdkVersion .*/minSdkVersion 23/g' {} +
-          find android/ -name "build.gradle" -exec sed -i 's/compileSdk = .*/compileSdk = 35/g' {} +
-          find android/ -name "build.gradle" -exec sed -i 's/targetSdk = .*/targetSdk = 35/g' {} +
-          find android/ -name "build.gradle" -exec sed -i 's/minSdk = .*/minSdk = 23/g' {} +
+          find android/ -name "build.gradle" -exec sed -i 's/minSdkVersion .*/minSdkVersion = 23/g' {} +
+          find android/ -name "build.gradle" -exec sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 23/g' {} +
 
       - name: Install Dependencies
         run: flutter pub get
@@ -59,4 +47,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: offline-walkie-app
-          path: build/app/outputs/**/*.apk
+          path: build/app/outputs/flutter-apk/*.apk
