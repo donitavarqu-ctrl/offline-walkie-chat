@@ -32,10 +32,14 @@ jobs:
           cd ..
           rm -rf temp_app
 
-      - name: Set minSdk to 23
+      - name: Configure Android SDK Versions
         run: |
-          sed -i 's/minSdkVersion .*/minSdkVersion = 23/g' android/app/build.gradle || true
-          sed -i 's/minSdkVersion.*/minSdkVersion 23/g' android/app/build.gradle.kts || true
+          sed -i 's/compileSdkVersion .*/compileSdkVersion 35/g' android/app/build.gradle || true
+          sed -i 's/targetSdkVersion .*/targetSdkVersion 35/g' android/app/build.gradle || true
+          sed -i 's/minSdkVersion .*/minSdkVersion 23/g' android/app/build.gradle || true
+          sed -i 's/compileSdk = .*/compileSdk = 35/g' android/app/build.gradle || true
+          sed -i 's/targetSdk = .*/targetSdk = 35/g' android/app/build.gradle || true
+          sed -i 's/minSdk = .*/minSdk = 23/g' android/app/build.gradle || true
 
       - name: Install Dependencies
         run: flutter pub get
