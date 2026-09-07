@@ -32,7 +32,7 @@ jobs:
           cd ..
           rm -rf temp_app
 
-      - name: Set Android SDK Version
+      - name: Configure Android SDK Versions
         run: |
           find android/ -name "build.gradle" -exec sed -i 's/minSdkVersion .*/minSdkVersion = 23/g' {} +
           find android/ -name "build.gradle" -exec sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 23/g' {} +
@@ -48,3 +48,4 @@ jobs:
         with:
           name: offline-walkie-app
           path: build/app/outputs/flutter-apk/*.apk
+          
