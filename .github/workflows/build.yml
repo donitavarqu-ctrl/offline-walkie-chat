@@ -5,6 +5,9 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -34,18 +37,41 @@ jobs:
 
       - name: Set minSdk to 23
         run: |
-          sed -i 's/minSdkVersion = flutter.minSdkVersion/minSdkVersion = 23/g' android/app/build.gradle
-          sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 23/g' android/app/build.gradle
+          find android/ -name "build.gradle" -exec sed -i 's/minSdkVersion = flutter.minSdkVersion/minSdkVersion = 23/g' {} +
+          find android/ -name "build.gradle" -exec sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 23/g' {} +
 
       - name: Install Dependencies
         run: flutter pub get
 
       - name: Build APK
-        run: flutter build apk --release
+        id: build_step
+        continue-on-error: true
+        run: |
+          flutter build apk --release 2>&1 | tee build.log
 
       - name: Upload APK Artifact
+        if: steps.build_step.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: offline-walkie-app
           path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Auto-Fix via Gemini AI
+        if: steps.build_step.outcome == 'failure'
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          ERROR_SUMMARY=$(tail -n 60 build.log)
+          PROMPT="Fix the following Flutter Android build error. Return actionable bash commands or file replacements: $ERROR_SUMMARY"
           
+          RESPONSE=$(curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}" \
+            -H 'Content-Type: application/json' \
+            -d "{\"contents\": [{\"parts\": [{\"text\": $(echo "$PROMPT" | jq -R -s .)}]}]}")
+          
+          echo "$RESPONSE" > ai_fix_log.json
+          git config --global user.name "Gemini-AutoFix"
+          git config --global user.email "gemini-bot@actions.github.com"
+          git add -A
+          git commit -m "🤖 AI Auto-Fix Log: Captured error details" || true
+          git push || true
+          exit 1
