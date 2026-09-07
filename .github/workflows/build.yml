@@ -1,4 +1,4 @@
-description: name: Build Android APK
+name: Build Android APK
 
 on:
   push:
@@ -60,4 +60,3 @@ jobs:
         with:
           name: offline-walkie-app
           path: build/app/outputs/**/*.apk
-          
