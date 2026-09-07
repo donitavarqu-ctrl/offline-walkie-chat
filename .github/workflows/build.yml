@@ -32,10 +32,12 @@ jobs:
           cd ..
           rm -rf temp_app
 
-      - name: Configure Android SDK Versions
+      - name: Configure Android SDK and Kotlin 1.9.22
         run: |
+          find android/ -name "build.gradle" -exec sed -i "s/ext.kotlin_version = .*/ext.kotlin_version = '1.9.22'/g" {} +
           find android/ -name "build.gradle" -exec sed -i 's/minSdkVersion .*/minSdkVersion = 23/g' {} +
           find android/ -name "build.gradle" -exec sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 23/g' {} +
+          find android/ -name "settings.gradle" -exec sed -i 's/id "org.jetbrains.kotlin.android" version ".*"/id "org.jetbrains.kotlin.android" version "1.9.22"/g' {} +
 
       - name: Install Dependencies
         run: flutter pub get
