@@ -24,7 +24,7 @@ jobs:
           channel: 'stable'
 
       - name: Generate Android Skeleton
-        run: flutter create --org com.example . --platforms=android
+        run: flutter create --org com.example --project-name offline_walkie_chat . --platforms=android
 
       - name: Install Dependencies
         run: flutter pub get
