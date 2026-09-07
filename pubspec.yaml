@@ -11,9 +11,13 @@ dependencies:
     sdk: flutter
   nearby_connections: ^4.2.1
   audioplayers: ^6.0.0
-  record: ^5.2.0
+  record: 5.1.2
   permission_handler: ^11.3.1
   network_info_plus: ^5.0.3
+
+dependency_overrides:
+  record_platform_interface: 1.1.0
+  record_linux: 0.5.2
 
 dev_dependencies:
   flutter_test:
